@@ -165,31 +165,43 @@ def set_sim(root, answers):
 
   gen = 0
 
-  for ind in lin.individuals:
+  run = True
 
-    manage_neurons = ManageNeurons(ind.first_neurons, ind.neurons,
+  root.bind('q', lambda e: run=False)
+
+  while run:
+
+    gen += 1
+
+    for ind in lin.individuals:
+
+      manage_neurons = ManageNeurons(ind.first_neurons, ind.neurons,
                                    ind.effectors)
 
-    ind_score = sim(screen_size=screen_size,
-                    screen_border=screen_border,
-                    screen_size_surfaces=screen_size_surfaces,
-                    ind=ind,
-                    view=view,
-                    time=int(answers[0].get()),
-                    neuron_manager=manage_neurons,
-                    zoom=int(answers[2].get()),
-                    map_size=int(answers[1].get()),
-                    food_timer=int(answers[3].get()),
-                    food_density=int(answers[4].get()))
+      ind_score = sim(screen_size=screen_size,
+                      screen_border=screen_border,
+                      screen_size_surfaces=screen_size_surfaces,
+                      ind=ind,
+                      view=view,
+                      time=int(answers[0].get()),
+                      neuron_manager=manage_neurons,
+                      zoom=int(answers[2].get()),
+                      map_size=int(answers[1].get()),
+                      food_timer=int(answers[3].get()),
+                      food_density=int(answers[4].get()))
 
-    ind.score = ind_score[0]
-    ind.distance_travelled = ind_score[1]
+      ind.score = ind_score[0]
+      ind.distance_travelled = ind_score[1]
+
+    save(answers, lin, gen)
+
+def save(answers, lin, gen):
 
   values = {
       "name": answers[5].get(),
       "n_individuals": len(lin.individuals),
       "generations": gen,
-      "n_receptors": len(view.squares),
+      "n_receptors": lin.n_recepors,
       "zoom": int(answers[2].get()),
       "gen_time": int(answers[0].get()),
       "map_size": int(answers[1].get()),
@@ -282,5 +294,3 @@ def set_sim(root, answers):
 
 
 main()
-#Test replit
-# This should be in github as well
