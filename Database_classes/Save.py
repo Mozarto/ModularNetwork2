@@ -39,6 +39,7 @@ def create_tables():
             lineage INTEGER NOT NULL,
             score INTEGER,
             distance_travelled REAL,
+            generation INTEGER,
             FOREIGN KEY (lineage) REFERENCES lineages(id)
     );
     """)
@@ -95,8 +96,8 @@ def insert_individuals(values, db):
     cur = conn.cursor()
 
     cur.execute(f"""
-    INSERT INTO individuals (lineage, score, distance_travelled)
-    VALUES ({values["lineage"]}, {values["score"]}, {values["distance_travelled"]})
+    INSERT INTO individuals (lineage, score, distance_travelled, generation)
+    VALUES ({values["lineage"]}, {values["score"]}, {values["distance_travelled"]}, {values["generation"]})
     """)
 
     # gravando no bd
@@ -113,7 +114,7 @@ def insert_neuron(values, db):
     conn = create_connection(db)
     # definindo um cursor
     cur = conn.cursor()
-
+    #print([i for i in values.values()])
     cur.execute(f"""
     INSERT INTO neurons (id_ind, individual, first_neuron, to_neuron, threshold, to_depolarization_rate, repolarization, to_depolarization)
     VALUES ('{values["id_ind"]}', {values["individual"]}, {values["first_neuron"]}, '{values["to_neuron"]}', {values["threshold"]},
@@ -126,4 +127,3 @@ def insert_neuron(values, db):
     # desconectando...
     #cur.close()
     conn.close()
-

@@ -3,7 +3,7 @@ import random
 
 
 class Individual:
-    def __init__(self, ID, receptors):
+    def __init__(self, ID, receptors, call_create = True):
         self.ID = ID
         self.neurons = {}  # {"ID":neuron}
         self.receptors = receptors
@@ -15,10 +15,11 @@ class Individual:
         self.creation_ratio = 10
         self.score = 0
         self.distance_travelled = 0
+        if call_create:
+            self.create_neurons()
 
 
 
-        self.create_neurons()
 
     def create_neurons(self):
 
@@ -46,7 +47,7 @@ class Individual:
             random_counter += 1
 
         next_gen = []
-        for i in self.neurons:
+        for i in list(self.neurons.keys()):
             next_gen.append(self.neurons[i])
 
         random.shuffle(next_gen)
@@ -65,7 +66,6 @@ class Individual:
                 random_counter += 1
             next_gen = next_gen_changing
 
-
         random.shuffle(next_gen)
         random_counter = 0
         for i in range(int(len(self.receptors))):
@@ -79,6 +79,7 @@ class Individual:
             self.first_neurons[str(i) + "_black"] = Neuron(str(i) + "_black", next_gen[random_counter])
             random_counter+=1
 
+
     def activate_first_neurons(self):
         for i in self.first_neurons:
             if self.first_neurons[i].is_activated:
@@ -86,8 +87,9 @@ class Individual:
         for square in range(len(self.receptors)):
             if self.receptors[square].changed:
                 self.receptors[square].changed = False
-                #print("called activate")
-                self.first_neurons[str(square) + "_" + self.receptors[square].color].to.activate(self.first_neuron_depolarization)
+
+                for to in self.first_neurons[str(square) + "_" + self.receptors[square].color].to:
+                    to.activate(self.first_neuron_depolarization)
                 self.first_neurons[str(square) + "_" + self.receptors[square].color].is_activated = True
 
 
@@ -103,3 +105,56 @@ class Individual:
     def depolarize_effectors(self):
         for i in self.effectors:
             self.effectors[i] = False
+
+    def add_neuron(self, amount):
+        list_of_ids = [int(i) for i in (list(self.neurons.keys()))]
+        list_of_ids.sort()
+        id_counter = list_of_ids[len(list_of_ids)-1]
+        for i in range(amount):
+            id_counter += 1
+            self.neurons[str(id_counter)] = Neuron(str(id_counter), self.neurons[random.choice(list(self.neurons.keys()))])
+
+    def delete_neuron(self, amount):
+        del_ids = []
+        for i in range(amount):
+            id = random.choice(list(self.neurons.keys()))
+            del self.neurons[id]
+            del_ids.append(id)
+
+
+        for i in self.neurons:
+            for j in self.neurons[i].to:
+                if not type(j) == str:
+                    if j.ID in del_ids:
+                        index = self.neurons[i].to.index(j)
+                        self.neurons[i].to.remove(j)
+                        self.neurons[i].current_dep_rate.pop(index)
+                        self.neurons[i].to_depolarization_rate.pop(index)
+                        self.neurons[i].to_depolarization.pop(index)
+
+        for i in self.first_neurons:
+            for j in self.first_neurons[i].to:
+                if j.ID in del_ids:
+                    index = self.first_neurons[i].to.index(j)
+                    self.first_neurons[i].to.remove(j)
+                    self.first_neurons[i].current_dep_rate.pop(index)
+                    self.first_neurons[i].to_depolarization_rate.pop(index)
+                    self.first_neurons[i].to_depolarization.pop(index)
+
+    def add_synapses(self, amount):
+        for i in range(amount):
+            index = random.choice(list(self.neurons.keys()))
+            self.neurons[index].to.append(self.neurons[random.choice(list(self.neurons.keys()))])
+            self.neurons[index].to_depolarization_rate.append(round(random.randint(0, 15), 2))
+            self.neurons[index].to_depolarization.append(round(random.random()*2-1, 2))
+            self.neurons[index].current_dep_rate.append(0)
+
+    def delete_synapses(self, amount):
+        for i in range(amount):
+            index = random.choice(list(self.neurons.keys()))
+            index_2 = random.choice(range(len(self.neurons[index].to) - 1)) if len(self.neurons[index].to) > 1 else 0
+            if len(self.neurons[index].to) > 0:
+                self.neurons[index].to.pop(index_2)
+                self.neurons[index].to_depolarization_rate.pop(index_2)
+                self.neurons[index].to_depolarization.pop(index_2)
+                self.neurons[index].current_dep_rate.pop(index_2)

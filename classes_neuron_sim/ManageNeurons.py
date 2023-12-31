@@ -53,17 +53,16 @@ class ManageNeurons:
 
 
 
-
     def draw(self, surface):
         for i in self.first_neurons_display:
+
             color = "grey45"
             if self.first_neurons_display[i].itself.is_activated:
                 color = "lightgoldenrod"
-                if type(self.first_neurons_display[i].itself.to) != str:
+                for to in self.first_neurons_display[i].itself.to:
                     pygame.draw.line(surface, color, self.first_neurons_display[i].pos,
-                                     self.neurons_display[self.first_neurons_display[i].itself.to.ID].pos)
-                else:
-                    pass
+                                         self.neurons_display[to.ID].pos)
+
 
             pygame.draw.circle(surface, self.first_neurons_display[i].color, self.first_neurons_display[i].pos,
                                self.neuron_halo_radius)
@@ -74,16 +73,15 @@ class ManageNeurons:
 
         for i in self.neurons_display:
             color = "grey45"
-            #print(self.neurons_display[i].itself.to + str(self.neurons_display[i].itself.is_activated)) if type(self.neurons_display[i].itself.to) == str else "."
             if self.neurons_display[i].itself.is_activated:
                 color = "lightgoldenrod"
-                if type(self.neurons_display[i].itself.to) != str:
-                    pygame.draw.line(surface, color, self.neurons_display[i].pos,
-                                 self.neurons_display[self.neurons_display[i].itself.to.ID].pos)
-                else:
-                    #print(self.effectors[self.neurons_display[i].itself.to])
-                    pygame.draw.line(surface, color, self.neurons_display[i].pos,
-                                     self.effectors_pos[self.neurons_display[i].itself.to])
+                for to in self.neurons_display[i].itself.to:
+                    if type(to) != str:
+                        pygame.draw.line(surface, color, self.neurons_display[i].pos,
+                                     self.neurons_display[to.ID].pos)
+                    else:
+                        pygame.draw.line(surface, color, self.neurons_display[i].pos,
+                                         self.effectors_pos[to])
 
             pygame.draw.circle(surface, color, self.neurons_display[i].pos,
                                self.neurons_display[i].radius)

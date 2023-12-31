@@ -5,7 +5,7 @@ from classes_sim.CollisionManager import CollisionManager
 from classes_sim.Food import Food
 
 
-def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_border, time, zoom, map_size, food_timer, food_density):
+def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_border, time, zoom, map_size, food_timer, food_density, gen, ind_counter):
     pygame.init()
 
     screen_main = pygame.display.set_mode(screen_size)
@@ -29,6 +29,14 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
 
     neurons_size_surface = (screen_size[0] / 4 * 3 - (screen_border * 2), screen_size[1] - (screen_border * 2))
     surface_neurons = pygame.Surface(neurons_size_surface)
+
+    font = pygame.font.SysFont("Arial", 24)
+    img = font.render(f'Loop: {timer}', True, (0, 0, 0))
+    img_gen = font.render(f'Generation: {gen}', True, (0, 0, 0))
+    img_ind = font.render(f'Individual ID: {ind.ID}', True, (0, 0, 0))
+    img_it = font.render(f'Individuals: {ind_counter}', True, (0, 0, 0))
+
+    run = True
 
     while running:
 
@@ -62,6 +70,11 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
         if keys[pygame.K_ESCAPE]:
              running = False
 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_q]:
+            running = False
+            run = False
+
         neuron_manager.move()
 
         walls.move([body.speed_vector[0], body.speed_vector[1]])
@@ -84,6 +97,8 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
 
         surface_neurons.fill("gray")
 
+        screen_main.fill("white")
+
         # RENDER YOUR GAME HERE
         walls.draw(surface_world)
         body.draw(surface_world)
@@ -103,6 +118,12 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
 
         screen_main.blit(surface_neurons, (screen_size[0] / 4 + screen_border, screen_border))
 
+        img = font.render(f'Loop: {timer}', True, (0, 0, 0))
+        screen_main.blit(img, (20, 60))
+        screen_main.blit(img_gen, (20, 20))
+        screen_main.blit(img_ind, (20, 100))
+        screen_main.blit(img_it, (20, 140))
+
         # flip() the display to put your work on surface_world
         pygame.display.flip()
 
@@ -116,4 +137,4 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
 
     pygame.quit()
 
-    return (body.score, body.calculate_distance_travelled())
+    return (body.score, body.calculate_distance_travelled(), run)

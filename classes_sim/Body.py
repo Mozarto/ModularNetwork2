@@ -10,7 +10,7 @@ class Body(pygame.Rect):
         self.INERTIA = 0.95
         self.SIZE = 10 * zoom
 
-        self.initial_pos = (0,0)
+        self.distance_counter = [0,0]
 
         super().__init__([screen_s[0]/2, screen_s[1]/2], (self.SIZE, self.SIZE))
         self.speed_vector = [0, 0] #[x, y]
@@ -36,15 +36,19 @@ class Body(pygame.Rect):
 
     def up(self):
         self.speed_vector[1] += self.SPEED
+        self.distance_counter[1] += 1
 
     def down(self):
         self.speed_vector[1] -= self.SPEED
+        self.distance_counter[1] -= 1
 
     def left(self):
         self.speed_vector[0] += self.SPEED
+        self.distance_counter[0] += 1
 
     def right(self):
         self.speed_vector[0] -= self.SPEED
+        self.distance_counter[0] -= 1
 
     def move_manager(self):
         self.speed_vector[0] *= self.INERTIA
@@ -54,5 +58,5 @@ class Body(pygame.Rect):
         pygame.draw.rect(screen, self.COLOR, self)
 
     def calculate_distance_travelled(self):
-        return math.sqrt(abs(self.x-self.initial_pos[0])**2 + abs(self.y-self.initial_pos[1])**2)
+        return math.sqrt(abs(self.distance_counter[0])**2 + abs(self.distance_counter[1])**2)
 
