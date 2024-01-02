@@ -82,15 +82,13 @@ class Individual:
 
     def activate_first_neurons(self):
         for i in self.first_neurons:
-            if self.first_neurons[i].is_activated:
-                self.first_neurons[i].is_activated = False
+            if self.first_neurons[i].is_activated[0]:
+                self.first_neurons[i].is_activated[0] = False
         for square in range(len(self.receptors)):
             if self.receptors[square].changed:
                 self.receptors[square].changed = False
-
-                for to in self.first_neurons[str(square) + "_" + self.receptors[square].color].to:
-                    to.activate(self.first_neuron_depolarization)
-                self.first_neurons[str(square) + "_" + self.receptors[square].color].is_activated = True
+                self.first_neurons[str(square) + "_" + self.receptors[square].color].to[0].activate(self.first_neuron_depolarization)
+                self.first_neurons[str(square) + "_" + self.receptors[square].color].is_activated[0] = True
 
 
     def depolarize_neurons(self):
@@ -113,41 +111,50 @@ class Individual:
         for i in range(amount):
             id_counter += 1
             self.neurons[str(id_counter)] = Neuron(str(id_counter), self.neurons[random.choice(list(self.neurons.keys()))])
+            rec_neuron = random.choice(list(self.neurons.keys()))
+            self.neurons[rec_neuron].to.append(self.neurons[str(id_counter)])
+            self.neurons[rec_neuron].to_depolarization_rate.append(round(random.randint(0, 15), 2))
+            self.neurons[rec_neuron].to_depolarization.append(round(random.random() * 2 - 1, 2))
+            self.neurons[rec_neuron].current_dep_rate.append(0)
+            self.neurons[rec_neuron].is_activated.append(False)
 
     def delete_neuron(self, amount):
-        del_ids = []
         for i in range(amount):
             id = random.choice(list(self.neurons.keys()))
             del self.neurons[id]
-            del_ids.append(id)
 
-
+    def clean_del_neurons(self):
         for i in self.neurons:
             for j in self.neurons[i].to:
                 if not type(j) == str:
-                    if j.ID in del_ids:
+                    if j.ID not in list(self.neurons.keys()):
                         index = self.neurons[i].to.index(j)
                         self.neurons[i].to.remove(j)
                         self.neurons[i].current_dep_rate.pop(index)
                         self.neurons[i].to_depolarization_rate.pop(index)
                         self.neurons[i].to_depolarization.pop(index)
+                        self.neurons[i].is_activated.pop(index)
 
         for i in self.first_neurons:
             for j in self.first_neurons[i].to:
-                if j.ID in del_ids:
+                if j.ID not in list(self.neurons.keys()):
                     index = self.first_neurons[i].to.index(j)
                     self.first_neurons[i].to.remove(j)
                     self.first_neurons[i].current_dep_rate.pop(index)
                     self.first_neurons[i].to_depolarization_rate.pop(index)
                     self.first_neurons[i].to_depolarization.pop(index)
+                    self.first_neurons[i].is_activated.pop(index)
 
     def add_synapses(self, amount):
         for i in range(amount):
+
             index = random.choice(list(self.neurons.keys()))
             self.neurons[index].to.append(self.neurons[random.choice(list(self.neurons.keys()))])
             self.neurons[index].to_depolarization_rate.append(round(random.randint(0, 15), 2))
             self.neurons[index].to_depolarization.append(round(random.random()*2-1, 2))
             self.neurons[index].current_dep_rate.append(0)
+            self.neurons[index].is_activated.append(False)
+
 
     def delete_synapses(self, amount):
         for i in range(amount):
@@ -158,3 +165,65 @@ class Individual:
                 self.neurons[index].to_depolarization_rate.pop(index_2)
                 self.neurons[index].to_depolarization.pop(index_2)
                 self.neurons[index].current_dep_rate.pop(index_2)
+                self.neurons[index].is_activated.pop(index_2)
+        for i in self.neurons:
+            if len(self.neurons[i].to) == 0:
+                del self.neurons[i]
+                self.clean_del_neurons()
+
+
+    def copy(self, other):
+        for neuron in other.neurons:
+            new_neuron = Neuron(other.neurons[neuron].ID, 0)
+            self.neurons[other.neurons[neuron].ID] = new_neuron
+
+        for neuron in other.neurons:
+
+            new_neuron = self.neurons[neuron]
+
+            new_neuron.repolarization = other.neurons[neuron].repolarization
+            new_neuron.threshold = other.neurons[neuron].threshold
+
+
+            new_neuron.to = []
+            new_neuron.to_depolarization_rate = []
+            new_neuron.to_depolarization = []
+            new_neuron.current_dep_rate = []
+
+            for i in range(len(other.neurons[neuron].to)):
+                new_neuron.to_depolarization_rate.append(other.neurons[neuron].to_depolarization_rate[i])
+                new_neuron.to_depolarization.append(other.neurons[neuron].to_depolarization[i])
+                new_neuron.current_dep_rate.append(other.neurons[neuron].current_dep_rate[i])
+                if type(other.neurons[neuron].to[i]) == str:
+                    new_neuron.to.append(other.neurons[neuron].to[i])
+                else:
+                    new_neuron.to.append(self.neurons[other.neurons[neuron].to[i].ID])
+
+
+        for first_neuron in other.first_neurons:
+            new_neuron = Neuron(other.first_neurons[first_neuron].ID, 0)
+            self.first_neurons[other.first_neurons[first_neuron].ID] = new_neuron
+
+        for first_neuron in other.first_neurons:
+
+            new_neuron = self.first_neurons[first_neuron]
+
+            new_neuron.repolarization = other.first_neurons[first_neuron].repolarization
+            new_neuron.threshold = other.first_neurons[first_neuron].threshold
+
+            new_neuron.to = []
+            new_neuron.to_depolarization_rate = []
+            new_neuron.to_depolarization = []
+            new_neuron.current_dep_rate = []
+
+            for i in range(len(other.first_neurons[first_neuron].to)):
+                new_neuron.to_depolarization_rate.append(other.first_neurons[first_neuron].to_depolarization_rate[i])
+                new_neuron.to_depolarization.append(other.first_neurons[first_neuron].to_depolarization[i])
+                new_neuron.current_dep_rate.append(other.first_neurons[first_neuron].current_dep_rate[i])
+
+                if type(other.first_neurons[first_neuron].to[i]) == str:
+                    new_neuron.to.append(other.first_neurons[first_neuron].to[i])
+                else:
+                    new_neuron.to.append(self.neurons[other.first_neurons[first_neuron].to[i].ID])
+
+

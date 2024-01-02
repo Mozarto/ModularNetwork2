@@ -45,7 +45,7 @@ def main():
         label_time.grid(row=2, column=1, sticky=W)
 
         entry_time = Entry(frame)
-        entry_time.insert(0, "10")
+        entry_time.insert(0, "150")
         entry_time.grid(row=2, column=2)
 
         # -----------------------------------
@@ -147,8 +147,10 @@ def main():
 
 
 def set_sim_new(root, answers):
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    # screen_width = root.winfo_screenwidth()
+    # screen_height = root.winfo_screenheight()
+    screen_width = 1200
+    screen_height = 675
 
     screen_size = (screen_width, screen_height)
     screen_border = 5
@@ -207,6 +209,7 @@ def set_sim_new(root, answers):
 
         lin.bubble_sort()
         if run:
+            #Evolution.check(lin)
             Evolution.clean(lin)
             #save(answers, lin, gen)
             Evolution.add(lin)
