@@ -2,10 +2,14 @@ from classes_network.Individual import Individual
 
 
 class Lineage:
-    def __init__(self, receptors, n_receptors, time, zoom, map_size):
+    def __init__(self, receptors, n_receptors, time, zoom, map_size, create_individuals = True):
+        self.database_id = -1,
+        self.generation = 0
         self.total_individuals = 10
         self.individuals_counter = 0
-        self.individuals = self.create_individuals(receptors)
+        self.individuals = []
+        if create_individuals:
+            self.individuals = self.create_individuals(receptors)
         self.generations = 0
 
 

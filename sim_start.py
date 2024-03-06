@@ -31,7 +31,6 @@ def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_bor
     surface_neurons = pygame.Surface(neurons_size_surface)
 
     font = pygame.font.SysFont("Arial", 24)
-    img = font.render(f'Loop: {timer}', True, (0, 0, 0))
     img_gen = font.render(f'Generation: {gen}', True, (0, 0, 0))
     img_ind = font.render(f'Individual ID: {ind.ID}', True, (0, 0, 0))
     img_it = font.render(f'Individuals: {ind_counter}', True, (0, 0, 0))

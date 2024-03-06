@@ -13,17 +13,16 @@ def add(lin):
         new_ind = []
         calc = int((lin.total_individuals-filtered_ind_amount)/filtered_ind_amount) if filtered_ind_amount != 0 else 0
         for j in range(calc):
-            ind = Individual(str(lin.individuals_counter+1), i.receptors, False)
+            ind = Individual(str(lin.individuals_counter+1), i.receptors, False, i.ID)
             lin.individuals_counter += 1
             ind.copy(i)
-            #ind.delete_neuron(int(len(ind.neurons)*EV_RATE_NEU)/2)
-            ind.add_neuron(int(len(ind.neurons)*EV_RATE_NEU))
-            #ind.delete_synapses(int((len(ind.neurons) * EV_RATE_NEU)))
+            ind.delete_neuron(int((len(ind.neurons)*EV_RATE_NEU)/2))
+            ind.delete_synapses(int((len(ind.neurons) * EV_RATE_NEU)))
+            ind.add_neuron(int(len(ind.neurons) * EV_RATE_NEU))
             ind.add_synapses(int((len(ind.neurons)*EV_RATE_NEU)*2))
+            ind.clean_del_neurons()
             new_ind.append(ind)
         lin.individuals += new_ind
-        # for i in lin.individuals:
-        #     print([len(j.to) for j in i.neurons if not type(j) == str])
 
 
 def check(lin):

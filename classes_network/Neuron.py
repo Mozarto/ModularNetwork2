@@ -17,35 +17,28 @@ class Neuron:
 
     def activate(self, add_threshold):
         self.current_threshold += add_threshold
-        # if len(self.to) > 1:
-        #     print(len(self.to))
-        #     print(self.current_dep_rate)
-        #     print(self.to_depolarization_rate)
-        #     print(self.to_depolarization)
-        #     print("----------------------------------")
+
         if self.current_threshold > self.threshold:
             for i in range(len(self.is_activated)):
                 self.is_activated[i] = True
+
+    def adjust_lists(self):
+        for i in range(len(self.to)+1):
+            if len(self.is_activated) < i:
+                self.is_activated.append(False)
+            if len(self.current_dep_rate) < i:
+                self.current_dep_rate.append(0)
 
     def depolarize(self):
         self.current_threshold*=self.repolarization
 
     def manage_activated(self, body, effectors):
         ran = range(len(self.to)) if len(self.to) > 1 else [0]
-        # if type(self.to[0]) != str:
-            # print("ID: " + str(self.to[0].ID))
-            # print("to: " + str([i.ID for i in self.to[0].to if not type(i) == str]))
-            # print("current: " + str(self.to[0].current_dep_rate))
-            # print("---------------------------------------------")
+
         for i in ran:
             if self.is_activated[i]:
-                # if type(self.to[0]) != str:
-                #     print("ID: " + str(self.to[0].ID))
-                #     print("to: " + str([i.ID for i in self.to[0].to if not type(i) == str]))
-                #     print("current: " + str(self.to[0].current_dep_rate))
-                #     print("---------------------------------------------")
-
                 self.current_dep_rate[i] += 1
+
                 if self.current_dep_rate[i] >= self.to_depolarization_rate[i]:
                     self.current_dep_rate[i] = 0
                     self.is_activated[i] = False
