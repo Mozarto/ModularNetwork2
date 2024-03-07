@@ -122,7 +122,7 @@ def main():
         label_time.grid(row=2, column=1, sticky=W)
 
         entry_time = Entry(frame)
-        entry_time.insert(0, "10")
+        entry_time.insert(0, "300")
         entry_time.grid(row=2, column=2)
 
         # -----------------------------------
