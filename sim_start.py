@@ -8,12 +8,12 @@ from classes_sim.Food import Food
 def sim(ind, view, neuron_manager, screen_size, screen_size_surfaces, screen_border, time, zoom, map_size, food_timer, food_density, gen, ind_counter):
     pygame.init()
 
+    # Initializes the simulation screen and important variables
     screen_main = pygame.display.set_mode(screen_size)
     screen_main.fill("white")
     clock = pygame.time.Clock()
     running = True
     framerate = 15
-
     surface_world = pygame.Surface(screen_size_surfaces)
 
     body = Body(screen_size_surfaces, zoom)

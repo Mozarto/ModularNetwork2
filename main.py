@@ -186,18 +186,16 @@ def main():
 
         frame.tkraise()
 
+    # Main menu window initialization
     root = Tk()
-
-    root.title("Sim Window")
-
+    root.title("Sim Window") # "Main Menu Window"
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
-
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    screen_width = root.winfo_screenwidth()     #
+    screen_height = root.winfo_screenheight()   #
     root_width = 600
     root_height = 400
-    root.geometry(
+    root.geometry(                              #
         f"{int(root_width)}x{int(root_height)}+{int(screen_width / 2 - root_width / 2)}+{int(screen_height / 2 - root_height / 2)}"
     )
 
@@ -232,12 +230,13 @@ def set_sim_load(listbox):
     values = database_get("lineages WHERE id="+str(id), ["*"], "Database_classes/modular_network.db")
     values = values[0]
 
+    # Simulation screen variables
     screen_width = 1200
     screen_height = 675
-
     screen_size = (screen_width, screen_height)
     screen_border = 5
 
+    # Surface screen variables
     screen_size_surfaces = (
         screen_size[0] / 4 - screen_border * 2,
         screen_size[1] / 4 - screen_border * 2,
